@@ -10,9 +10,11 @@ if len(sys.argv) != 4:
 
 # this function is gross
 def fixup_zip(data, start_offset):
-
-	# find the "end of central directory" marker
-	end_central_dir_offset = data.rindex(b"PK\x05\x06")
+    # find the "end of central directory" marker
+	try:
+		end_central_dir_offset = data.rindex(b"PK\x05\x06")
+	except:
+		end_central_dir_offset = data.rfind(b"PK\x05\x06")
 	
 	# find the number of central directory entries
 	cdent_count = unpack_from("<H", data, end_central_dir_offset+10)[0]
@@ -24,7 +26,7 @@ def fixup_zip(data, start_offset):
 	
 	# iterate over the central directory entries
 	for _ in range(cdent_count):
-		central_dir_start_offset = data.index(b"PK\x01\x02", central_dir_start_offset)
+		central_dir_start_offset = data.find(b"PK\x01\x02", central_dir_start_offset)
 		
 		# fix the offset that points to the local file header
 		off_range = slice(central_dir_start_offset+42, central_dir_start_offset+42+4)
