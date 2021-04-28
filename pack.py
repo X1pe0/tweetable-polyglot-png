@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 import zlib
 from struct import unpack_from
 import sys
